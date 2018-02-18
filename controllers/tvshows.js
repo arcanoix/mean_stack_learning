@@ -1,35 +1,45 @@
+//File: controllers/tvshows.js
 var mongoose = require('mongoose');
-var TVShow = mongoose.model('TVShow');
+var TVShow  = mongoose.model('TVShow');
 
-//get data find all tvshow
-
+//GET - Return all tvshows in the DB
 exports.findAllTVShows = function(req, res) {
 	TVShow.find(function(err, tvshows) {
-		if(err) res.send(500, err.message);
+    if(err) res.send(500, err.message);
 
-		console.log('GET /tvshows');
+    console.log('GET /tvshows')
 		res.status(200).jsonp(tvshows);
 	});
 };
 
-//post insert a new tvshow in the db
-exports.addTVShow = function (req, res) {
+//GET - Return a TVShow with specified ID
+exports.findById = function(req, res) {
+	TVShow.findById(req.params.id, function(err, tvshow) {
+    if(err) return res.send(500, err.message);
+
+    console.log('GET /tvshow/' + req.params.id);
+		res.status(200).jsonp(tvshow);
+	});
+};
+
+//POST - Insert a new TVShow in the DB
+exports.addTVShow = function(req, res) {
 	console.log('POST');
 	console.log(req.body);
 
 	var tvshow = new TVShow({
-		title: req.body.title,
-		year: req.body.year,
-		country: req.body.country,
-		poster: req.body.poster,
-		seasons: req.body.seasons,
-		genre: req.body.genre,
-		summary: req.body.summary		
+		title:    req.body.title,
+		year: 	  req.body.year,
+		country:  req.body.country,
+		poster:   req.body.poster,
+		seasons:  req.body.seasons,
+		genre:    req.body.genre,
+		summary:  req.body.summary
 	});
 
 	tvshow.save(function(err, tvshow) {
-		if(err) return res.status(500).send(err.message);
-			res.status(200).jsonp(tvshow);
+		if(err) return res.send(500, err.message);
+    res.status(200).jsonp(tvshow);
 	});
 };
 
@@ -45,8 +55,8 @@ exports.updateTVShow = function(req, res) {
 		tvshow.summary = req.body.summary;
 
 		tvshow.save(function(err) {
-			if(err) return res.status(500).send(err.message);
-      			res.status(200).jsonp(tvshow);
+			if(err) return res.send(500, err.message);
+      res.status(200).jsonp(tvshow);
 		});
 	});
 };
@@ -55,8 +65,8 @@ exports.updateTVShow = function(req, res) {
 exports.deleteTVShow = function(req, res) {
 	TVShow.findById(req.params.id, function(err, tvshow) {
 		tvshow.remove(function(err) {
-			if(err) return res.status(500).send(err.message);
-      			res.status(200).send();
+			if(err) return res.send(500, err.message);
+      res.status(200);
 		})
 	});
 };
